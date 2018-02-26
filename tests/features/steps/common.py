@@ -1,8 +1,12 @@
-import os, time, logging
-from behave import given, when, then
+import logging
+import time
+
+from behave import given, then
 from behave import use_step_matcher
-from tests.config import config
+
 from tests.resource.driver.webdriverAPI import WebDriverApi
+from tests.resource.pages.page_elements import SignInPageObjects
+from tests.resource.properties.main_properties import MainProperties
 
 # GLOBAL DICT
 web_dict = {}
@@ -26,17 +30,17 @@ def end_webdriver(context):
 @given('navigate to "(?P<endpoint>.*)" page')
 def navigate_to_page(context, endpoint):
 
-    if endpoint in config:
-        context.driver.browser_launch(config[endpoint]['url'])
+    if hasattr(MainProperties, endpoint):
+        context.driver.browser_launch(MainProperties.hr_prod_url)
     else:
         LOG.info(" '" + endpoint + "' is not a configured endpoint.")
-        LOG.info("Check that endpoint exists in config.yml")
+        LOG.info("Check that endpoint exists in /properties/main_properties.py")
         raise Exception()
 
 
 @then('validate the "(?P<element>.*)" is displayed on the sign in page')
 def validate_the_element_is_displayed(context, element):
-    context.driver.find_element_by("xpath", config['page_elements']['sign_in_page'][element])
+    context.driver.find_element_by(SignInPageObjects.HACKERRANK_LOGO)
 
 
 @given('sleep for "(?P<time_in_sec>.*)" seconds')

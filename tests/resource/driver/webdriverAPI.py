@@ -9,6 +9,16 @@ from selenium.webdriver.common.by import By
 
 LOG = logging.getLogger(__name__)
 
+BY_TYPES = [By.ID,
+            By.XPATH,
+            By.LINK_TEXT,
+            By.PARTIAL_LINK_TEXT,
+            By.NAME,
+            By.TAG_NAME,
+            By.CLASS_NAME,
+            By.CSS_SELECTOR
+            ]
+
 class WebDriverApi:
 
     def __init__(self):
@@ -39,68 +49,35 @@ class WebDriverApi:
         except (AttributeError, TypeError) as e:
             LOG.info("Browser not located. Try changing driver handler")
 
-    def find_element_by(self, by_type, locator):
-        by_type = by_type.lower()
+    def find_element_by(self, by_locator):
         web_element = None
 
         try:
-            if by_type == "id":
-                web_element = self.instance.find_element(By.ID, locator)
-            elif by_type == "xpath":
-                web_element = self.instance.find_element(By.XPATH, locator)
-            elif by_type == "link_text":
-                web_element = self.instance.find_element(By.LINK_TEXT, locator)
-            elif by_type == "partial_link_text":
-                web_element = self.instance.find_element(By.PARTIAL_LINK_TEXT, locator)
-            elif by_type == "name":
-                web_element = self.instance.find_element(By.NAME, locator)
-            elif by_type == "tag_name":
-                web_element = self.instance.find_element(By.TAG_NAME, locator)
-            elif by_type == "class_name":
-                web_element = self.instance.find_element(By.CLASS_NAME, locator)
-            elif by_type == "css_selector":
-                web_element = self.instance.find_element(By.CSS_SELECTOR, locator)
+            if by_locator[0] in BY_TYPES:
+                web_element = self.instance.find_element(*by_locator)
             else:
-                LOG.info("Unable to classify selector type.")
-                LOG.info("Verify syntax and element identifier (ie. id, name, xpath, css_selector...) is correct")
-                LOG.info("Element in question: " + str(web_element))
-                raise Exception()
-
+                LOG.info("Invalid BY.[TYPE]...")
+                raise Exception(LOG)
         except:
-            raise Exception("Failed to identify element")
+            raise Exception("Failed to find a valid element")
+
+        if web_element == None:
+            LOG.info("Unable to classify selector type.")
+            LOG.info("Verify syntax and element identifier (ie. id, name, xpath, css_selector...) is correct")
+            raise Exception(LOG)
 
         return web_element
 
 
-    def wait_for_element_by(self, by_type, locator, timeout=30):
+    def wait_for_element_by(self, by_locator, timeout=30):
         by_type = by_type.lower()
-        web_element = None
 
         try:
-            if by_type == "id":
-                WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(By.ID, locator))
-            elif by_type == "xpath":
-                WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(By.XPATH, locator))
-            elif by_type == "link_text":
-                WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(By.LINK_TEXT, locator))
-            elif by_type == "partial_link_test":
-                WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(By.PARTIAL_LINK_TEXT, locator))
-            elif by_type == "name":
-                WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(By.NAME, locator))
-            elif by_type == "tag_name":
-                WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(By.TAG_NAME, locator))
-            elif by_type == "class_name":
-                WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(By.CLASS_NAME, locator))
-            elif by_type == "css_selector":
-                WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(By.CSS_SELECTOR, locator))
-            elif by_type == "xpath":
-                WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(By.XPATH, locator))
+            if by_locator in BY_TYPES:
+                WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(*by_locator))
             else:
-                LOG.info("Unable to classify selector type.")
-                LOG.info("Verify syntax and element identifier (ie. id, name, xpath, css_selector...) is correct")
-                LOG.info("Element in question: " + str(web_element))
-                raise Exception()
-
+                LOG.info("Invalid BY.[TYPE]...")
+                raise Exception(LOG)
         except:
             raise Exception("Failed to identify element")
 
