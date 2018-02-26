@@ -1,0 +1,10 @@
+page_elements: !include page_elements.yml
+
+
+hr_prod:
+  url: https://www.hackerrank.com/
+  username: 
+  password: 
+
+
+
