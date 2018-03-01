@@ -14,4 +14,7 @@ CSS_SELECTOR
 '''
 
 class SignInPageObjects:
-    HACKERRANK_LOGO = [By.XPATH, "//img[@class='dark-logo-img']"]
+    hackerrank_logo = [By.XPATH, "//img[@class='dark-logo-img']"]
+    top_nav_developers = [By.XPATH, "//*[contains(@class, 'active') and contains(@class, 'pjR')]"]
+    top_nav_for_companies = [By.XPATH, "//*[contains(@class,'sub-menu-2 homepage-dropdown')]"]
+    top_nav_for_school = [By.XPATH, "//*[contains(@@@data-analytics,'ForSchoolsLink') and contains(@class, 'pjR')]"]

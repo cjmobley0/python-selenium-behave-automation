@@ -31,16 +31,45 @@ def end_webdriver(context):
 def navigate_to_page(context, endpoint):
 
     if hasattr(MainProperties, endpoint):
-        context.driver.browser_launch(MainProperties.hr_prod_url)
+        selector = getattr(MainProperties, endpoint)
+        context.driver.browser_launch(selector)
     else:
         LOG.info(" '" + endpoint + "' is not a configured endpoint.")
         LOG.info("Check that endpoint exists in /properties/main_properties.py")
-        raise Exception()
+        raise Exception(LOG)
 
 
 @then('validate the "(?P<element>.*)" is displayed on the sign in page')
 def validate_the_element_is_displayed(context, element):
-    context.driver.find_element_by(SignInPageObjects.HACKERRANK_LOGO)
+    if hasattr(SignInPageObjects, element):
+        selector = getattr(SignInPageObjects, element)
+        web_element = context.driver.find_element_by(selector)
+        print (web_element)
+    else:
+        LOG.info(" '" + element + "' is not a valid selector in SignInPageObjects")
+        raise Exception(LOG)
+
+@then('validate the following top navigation elements are displayed on the home page')
+def validate_the_following_elements_displayed_on_sign_in_page(context):
+    test_fail = False
+    for row in context.table:
+        if hasattr(SignInPageObjects, row[0]):
+            selector = getattr(SignInPageObjects, row[0])
+
+            if context.driver.find_element_by(selector) != None:
+                print("\tPASSED - " + str(row[0]))
+            else:
+                test_fail = True
+                print("\tFAILED - " + str(row[0]))
+
+        else:
+            LOG.info(" '" + str(row) + "' is not a valid selector in SignInPageObjects")
+            raise Exception(LOG)
+
+    if test_fail:
+        raise AssertionError("One of the elements have failed to load")
+
+
 
 
 @given('sleep for "(?P<time_in_sec>.*)" seconds')

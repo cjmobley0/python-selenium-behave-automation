@@ -59,7 +59,7 @@ class WebDriverApi:
                 LOG.info("Invalid BY.[TYPE]...")
                 raise Exception(LOG)
         except:
-            raise Exception("Failed to find a valid element")
+            return None
 
         if web_element == None:
             LOG.info("Unable to classify selector type.")
