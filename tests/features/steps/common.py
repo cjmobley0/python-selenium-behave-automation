@@ -1,20 +1,20 @@
-import logging
-import time
+import logging, time
+import ast  #Translate unitcode -> python object
 
 from behave import given, then
 from behave import use_step_matcher
 
 from tests.resource.driver.webdriverAPI import WebDriverApi
-from tests.resource.pages.page_elements import SignInPageObjects
+from tests.resource.services.auto_service import AutomationServices
 from tests.resource.properties.main_properties import MainProperties
 
 # GLOBAL DICT
 web_dict = {}
-
 LOG = logging.getLogger(__name__)
-
 use_step_matcher("re")
 
+#Class instanciations
+autoServices = AutomationServices()
 
 @given('START (?P<browser>.*) browser')
 def start_browser(context, browser):
@@ -35,42 +35,45 @@ def navigate_to_page(context, endpoint):
         context.driver.browser_launch(selector)
     else:
         LOG.info(" '" + endpoint + "' is not a configured endpoint.")
-        LOG.info("Check that endpoint exists in /properties/main_properties.py")
+        LOG.info("Check that endpoint exists in properties file")
         raise Exception(LOG)
 
 
-@then('validate the "(?P<element>.*)" is displayed on the sign in page')
-def validate_the_element_is_displayed(context, element):
-    if hasattr(SignInPageObjects, element):
-        selector = getattr(SignInPageObjects, element)
+@then('validate the "(?P<element>.*)" is displayed on the "(?P<page_type>.*)" page')
+def validate_the_element_is_displayed(context, element, page_type):
+
+    # Dynamic class setter
+    elem_page_type = autoServices.getPageType(page_type)
+
+    if hasattr(elem_page_type, element):
+        selector = getattr(elem_page_type, element)
         web_element = context.driver.find_element_by(selector)
-        print (web_element)
     else:
-        LOG.info(" '" + element + "' is not a valid selector in SignInPageObjects")
+        LOG.info(" '" + element + "' is not a valid selector in " + page_type)
         raise Exception(LOG)
 
-@then('validate the following top navigation elements are displayed on the home page')
-def validate_the_following_elements_displayed_on_sign_in_page(context):
-    test_fail = False
-    for row in context.table:
-        if hasattr(SignInPageObjects, row[0]):
-            selector = getattr(SignInPageObjects, row[0])
 
-            if context.driver.find_element_by(selector) != None:
-                print("\tPASSED - " + str(row[0]))
-            else:
-                test_fail = True
-                print("\tFAILED - " + str(row[0]))
+@when('the user clicks the "(?P<element>.*)" (?:button|element) on the "(?P<page_type>.*)" page')
+def the_user_clicks_the_element(context, element, page_type):
 
-        else:
-            LOG.info(" '" + str(row) + "' is not a valid selector in SignInPageObjects")
-            raise Exception(LOG)
+    # Dynamic class setter: Gets page type associated with element
+    elem_page_type = autoServices.getPageType(page_type)
 
-    if test_fail:
-        raise AssertionError("One of the elements have failed to load")
+    if hasattr(elem_page_type, element):
+        selector = getattr(elem_page_type, element)
+        context.driver.find_element_by(selector).click()
+    else:
+        LOG.info(" '" + element + "' is not a valid selector in " + page_type)
+        raise Exception(LOG)
 
+@then('validate the user is navigated to the "(?P<url>.*)" page')
+def validate_user_is_navigated_to_the_page(context, url):
+    curr_url = context.driver.instance.current_url
 
-
+    if getattr(MainProperties, url) == curr_url:
+        pass
+    else:
+        LOG.info(" 'Current URL: " + curr_url + " does not match the expected URL: " + str(getattr(MainProperties, url))  + "' ")
 
 @given('sleep for "(?P<time_in_sec>.*)" seconds')
 def sleep_for_seconds(context, time_in_sec):

@@ -75,6 +75,7 @@ class WebDriverApi:
         try:
             if by_locator in BY_TYPES:
                 WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(*by_locator))
+                return True
             else:
                 LOG.info("Invalid BY.[TYPE]...")
                 raise Exception(LOG)
