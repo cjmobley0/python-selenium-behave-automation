@@ -23,8 +23,14 @@ Feature: Verify UI and functionality of the Sign In Page
 			| top_nav_login_button		|
 			| top_nav_signup_button 	|
 
-    @Done @asdf
+    @Done
     Scenario: Verify the user is navigated to the login page when clicking the login button
       Given navigate to "hr_prod_url" page
       When the user clicks the "top_nav_login_button" button on the "HomePage" page
       Then validate the user is navigated to the "hr_login_url" page
+
+    @Done @asdf
+    Scenario: Verify the user is navigated to the sign-up page when clicking the sign-up button
+      Given navigate to "hr_prod_url" page
+      When the user clicks the "top_nav_signup_button" button on the "HomePage" page
+      Then validate the user is navigated to the "hr_signup_url" page

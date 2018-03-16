@@ -66,14 +66,21 @@ def the_user_clicks_the_element(context, element, page_type):
         LOG.info(" '" + element + "' is not a valid selector in " + page_type)
         raise Exception(LOG)
 
-@then('validate the user is navigated to the "(?P<url>.*)" page')
-def validate_user_is_navigated_to_the_page(context, url):
-    curr_url = context.driver.instance.current_url
+@then('validate the user is navigated to the "(?P<page_type>.*)" page')
+def validate_user_is_navigated_to_the_page(context, page_type):
+    expected_url = getattr(MainProperties, page_type)
 
-    if getattr(MainProperties, url) == curr_url:
+    # Wait for page to load fully before validation
+    expected_elmt = AutomationServices().getExpectedElmt(expected_url)
+    context.driver.wait_for_element_by(expected_elmt)
+
+    # Check that URLs match
+    curr_url = context.driver.instance.current_url
+    if expected_url == curr_url:
         pass
     else:
-        LOG.info(" 'Current URL: " + curr_url + " does not match the expected URL: " + str(getattr(MainProperties, url))  + "' ")
+        LOG.info(" 'Current URL: " + curr_url + " does not match the expected URL: " + str(getattr(MainProperties, page_type))  + "' ")
+        raise Exception(LOG)
 
 @given('sleep for "(?P<time_in_sec>.*)" seconds')
 def sleep_for_seconds(context, time_in_sec):

@@ -70,10 +70,10 @@ class WebDriverApi:
 
 
     def wait_for_element_by(self, by_locator, timeout=30):
-        by_type = by_type.lower()
+        web_element = None
 
         try:
-            if by_locator in BY_TYPES:
+            if by_locator[0] in BY_TYPES:
                 WebDriverWait(self.instance, timeout).until(lambda d : d.find_element(*by_locator))
                 return True
             else:
