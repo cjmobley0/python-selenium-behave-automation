@@ -38,9 +38,6 @@ class WebDriverApi:
             self.instance = webdriver.Chrome( '/Users/Chris/chromedriver/chromedriver' , chrome_options=chrome_options, desired_capabilities=chrome_capabilities)
             self.instance.implicitly_wait(2)
 
-        browser = self.instance
-
-
     def tear_down(self):
         try:
             self.instance.quit()
@@ -56,14 +53,14 @@ class WebDriverApi:
             if by_locator[0] in BY_TYPES:
                 web_element = self.instance.find_element(*by_locator)
             else:
-                LOG.info("Invalid BY.[TYPE]...")
+                LOG.info(" Invalid BY.[TYPE]...")
                 raise Exception(LOG)
         except:
             return None
 
         if web_element == None:
-            LOG.info("Unable to classify selector type.")
-            LOG.info("Verify syntax and element identifier (ie. id, name, xpath, css_selector...) is correct")
+            LOG.info(" Unable to classify selector type.")
+            LOG.info(" Verify syntax and element identifier (ie. id, name, xpath, css_selector...) is correct")
             raise Exception(LOG)
 
         return web_element
@@ -80,12 +77,15 @@ class WebDriverApi:
                 LOG.info("Invalid BY.[TYPE]...")
                 raise Exception(LOG)
         except:
-            raise Exception("Failed to identify element")
+            LOG.info(" Failed to identify element...")
+            raise Exception(LOG)
 
 
     def browser_launch(self, endpoint):
 
-        if self.current_browser == 'Chrome':
+        browser_type = self.instance.name
+
+        if browser_type == 'chrome':
             try:
                 self.instance.set_window_size(1366, 768)
                 self.instance.get(endpoint)

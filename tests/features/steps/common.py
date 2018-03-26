@@ -1,5 +1,4 @@
 import logging, time
-import ast  #Translate unitcode -> python object
 
 from behave import given, then
 from behave import use_step_matcher
@@ -7,6 +6,7 @@ from behave import use_step_matcher
 from tests.resource.driver.webdriverAPI import WebDriverApi
 from tests.resource.services.auto_service import AutomationServices
 from tests.resource.properties.main_properties import MainProperties
+
 
 # GLOBAL DICT
 web_dict = {}
@@ -20,11 +20,6 @@ autoServices = AutomationServices()
 def start_browser(context, browser):
     context.driver = WebDriverApi()
     context.driver.instance(browser)
-
-
-@given('END')
-def end_webdriver(context):
-    context.driver.tearDown()
 
 
 @given('navigate to "(?P<endpoint>.*)" page')

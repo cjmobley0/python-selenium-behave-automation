@@ -7,7 +7,7 @@ README
 
 ##Execute using Behave through Command Line
 
-behave -m /Users/Chris/Coding/git/python-selenium-behave-automation/tests/features --tags @asdf --no-skipped
+*   behave -m /Users/Chris/Coding/git/python-selenium-behave-automation/tests/features --tags @asdf --no-skipped
 
 
 ##Execute using PyCharm through automation_runner.py
